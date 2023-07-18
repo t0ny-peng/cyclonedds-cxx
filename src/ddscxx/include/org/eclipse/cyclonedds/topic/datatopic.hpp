@@ -1002,16 +1002,16 @@ template <typename T,
           class S >
 class ddscxx_sertype : public ddsi_sertype {
 public:
-  static const ddscxx_sertype_ops<T,S> sertype_ops;
-  static const ddscxx_serdata_ops<T,S> serdata_ops;
+  static ddscxx_sertype_ops<T,S> sertype_ops;
+  static ddscxx_serdata_ops<T,S> serdata_ops;
   ddscxx_sertype();
 };
 
 template <typename T, class S>
-const ddscxx_sertype_ops<T,S> ddscxx_sertype<T,S>::sertype_ops;
+ddscxx_sertype_ops<T,S> ddscxx_sertype<T,S>::sertype_ops;
 
 template <typename T, class S>
-const ddscxx_serdata_ops<T,S> ddscxx_sertype<T,S>::serdata_ops;
+ddscxx_serdata_ops<T,S> ddscxx_sertype<T,S>::serdata_ops;
 
 template <typename T, class S>
 ddscxx_sertype<T,S>::ddscxx_sertype()
@@ -1022,6 +1022,10 @@ ddscxx_sertype<T,S>::ddscxx_sertype()
   flags |= (TopicTraits<T>::isSelfContained() ?
       DDSI_SERTYPE_FLAG_FIXED_SIZE : 0);
 #endif
+
+  // Initialize again since there's a bug in static veriable initialization order
+  sertype_ops = ddscxx_sertype_ops<T,S>();
+  serdata_ops = ddscxx_serdata_ops<T,S>();
 
   ddsi_sertype_init_flags(
       static_cast<ddsi_sertype*>(this),
